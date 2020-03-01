@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Module C3.9</title>
+</head>
+<body>
+<!-- div'ы сделаны для дальнейшей стилизации-->
+	<h1 align = center>Задание модуля С3.9</h1>
+	<hr>
+	<h2 align = center>Первая часть задания:</h2>
+	
+<!-- Контейнер для первого задания про город -->
+	<div align = center>
+		<label for="city" id="cityText" >Ваш город:</label><input type="text" style="margin-left: 20px;" name="city" class="city" placeholder="Введите название" autocomplete="off">
+		<br><br>
+		<a href='' onclick='deleteCity()' title='Сбросить значение города'>Сброс</a>
+		<hr>		
+	</div>
+	
+	<h2 align = center>Вторая часть задания:</h2>
+	
+<!-- Контейнер для второго задания про checkbox -->
+	<div align = center>
+		<form name="form">
+			<fieldset align = left style="width: 600px;" >
+				<legend>Галочки предпочтений</legend>
+					<label style="display: block;" for="noCall">
+						<input type="checkbox" id="noCall" name="opt" value="True">
+						Не звонить мне
+					</label>
+
+					<label style="display: block;" for="readAgree">
+						<input type="checkbox" id="readAgree" name="opt" value="True">
+						Я прочитал и согласен с правилами пользования сервисом
+					</label>
+
+					<label tyle="display: block;" for="noOption">
+						<input type="checkbox" id="noOption" name="opt" value="True">
+						Я не выбираю эту галочку
+					</label>
+
+					<label style="display: block;" for="agreeFree">
+						<input type="checkbox" id="agreeFree" name="opt" value="True">
+						Я подтверждаю, что свобода в интернете - это возможность выбирать галочки
+					</label>
+
+					<label style="display: block;" for="age">
+						<input type="checkbox" id="age" name="opt" value="True">
+						Мне больше 12 лет
+					</label>
+
+					<label style="display: block;" for="correct">
+						<input type="checkbox" id="correct" name="opt" value="True">
+						Это задание выполнено правильно
+					</label>
+					<input type="submit" style="display: block; margin: auto;" onclick="selChk()" value="Отправить" >
+					<a href="" onclick='deleteCheck()' title='Сбросить отмеченные галочки'>Сброс - для проверки</a>
+			</fieldset>
+		</form>
+	</div>
+
+<!-- JavaScript код  -->	
+	
+	<script>
+// Переменная хранения введенного города
+		const City = document.querySelector('.city');
+// Переменная записи даты, для хранения cook
+		let date = new Date(Date.now() + 86400e3);
+// Переменная для изменения параграфа
+		let cityText = document.getElementById('cityText');
+
+// Чтение Cookie
+		function getCookie(name){
+			let matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
+  			return matches ? decodeURIComponent(matches[1]):undefined;
+			};
+// Запись Cookie c сроком хранения 1 день
+		function setCookie(name, value, options = {}) {
+			options = {
+				path: '/',
+				expires: date
+				};
+
+			if (options.expires.toUTCString) {
+				options.expires = options.expires.toUTCString();
+				};
+
+			let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+			for (let optionKey in options) {
+				updatedCookie += "; " + optionKey;
+				let optionValue = options[optionKey];
+				if (optionValue !== true) {
+					updatedCookie += "=" + optionValue;
+					};
+				};
+				document.cookie = updatedCookie;
+				};
+
+// Удаление Cookie
+		function deleteCookie(name) {
+			setCookie(name, "", {
+				'max-age': 0
+				});
+			};
+//обработка ввода
+		City.addEventListener('change',async _ =>{
+			setCookie('city', City.value);
+			location.reload();
+			});
+// Удаление названия города из cookie
+		function deleteCity(){
+			deleteCookie('city');
+			};
+//загрузка страницы с изменениями
+		window.onload = function() {
+			if (getCookie('city')){
+				City.value = getCookie('city');
+				cityText.innerHTML += ' '+City.value;
+				document.querySelector('.city').remove();
+				};
+			Dis();
+			};
+//Обработка chekcbox'ов
+// Запись в cookie включенных checkbox'ов		
+		function selChk(){
+			var arrows = document.forms['form'].opt;
+			for(i = 0; i < arrows.length; i++){
+				if (arrows[i].checked){
+					setCookie(arrows[i].id, arrows[i].value);
+					};
+			};
+			arrows=0;
+		};
+
+// Отключение выбранных checkbox'ов
+	function Dis(){
+		var arrows = document.forms['form'].opt;
+		for(i = 0; i < arrows.length; i++){
+			if (getCookie(arrows[i].id,'True')){
+				arrows[i].checked='checked';
+				arrows[i].disabled='disabled';
+			};
+		};
+	};
+// Сброс отключенных и отмеченных checkbox'ов
+	function deleteCheck(){
+		var arrows = document.forms['form'].opt;
+		for(i = 0; i < arrows.length; i++){
+			if (getCookie(arrows[i].id,'True')){
+				deleteCookie(arrows[i].id);
+			};
+		};
+	};
+
+	</script>
+</body>
+</html>
